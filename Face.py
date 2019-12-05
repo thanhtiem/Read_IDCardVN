@@ -14,13 +14,12 @@ from scipy.spatial.distance import cosine
 from mtcnn.mtcnn import MTCNN
 from keras_vggface.vggface import VGGFace
 from keras_vggface.utils import preprocess_input
+import cv2
+import decimal
 
-from matplotlib.patches import Rectangle
-from matplotlib.patches import Circle
 
-# extract a single face from a given photograph
-def extract_face(filename, required_size=(224, 224)):
-    pixels = pyplot.imread(filename)
+def extract_face(pixels, required_size=(224, 224)):
+    # pixels = pyplot.imread(filename)
     detector = MTCNN()
     results = detector.detect_faces(pixels)
     x1, y1, width, height = results[0]['box']
@@ -31,23 +30,27 @@ def extract_face(filename, required_size=(224, 224)):
     face_array = asarray(image)
     return face_array
 
-# draw an image with detected objects
-def draw_image_with_boxes(filename, result_list):
-	data = pyplot.imread(filename)
-	pyplot.imshow(data)
-	ax = pyplot.gca()
-	for result in result_list:
-		x, y, width, height = result['box']
-		rect = Rectangle((x, y), width, height, fill=False, color='red')
-		ax.add_patch(rect)
-		for value in result['keypoints'].items():
-			dot = Circle(value, radius=2, color='red')
-			ax.add_patch(dot)
-	pyplot.show()
+# def draw_image_with_boxes(data, result_list):
+# 	# data = pyplot.imread(filename)
+# 	pyplot.imshow(data)
+# 	ax = pyplot.gca()
+# 	for result in result_list:
+# 		x, y, width, height = result['box']
+# 		rect = Rectangle((x, y), width, height, fill=False, color='red')
+# 		ax.add_patch(rect)
+# 		for value in result['keypoints'].items():
+# 			dot = Circle(value, radius=2, color='red')
+# 			ax.add_patch(dot)
+# 	pyplot.show()
 
+def detect_face(img):
+    detector = MTCNN()
+    results = detector.detect_faces(img)
+    x1, y1, width, height = results[0]['box']
+    x2, y2 = x1 + width, y1 + height
+    face = img[y1:y2, x1:x2]
+    return face
 
-
-# extract faces and calculate face embeddings for a list of photo files
 def get_embeddings(filenames):
     faces = [extract_face(f) for f in filenames]
     samples = asarray(faces, 'float32')
@@ -56,32 +59,29 @@ def get_embeddings(filenames):
     yhat = model.predict(samples)
     return yhat
 
-# determine if a candidate face is a match for a known face
 def is_match(known_embedding, candidate_embedding, thresh=0.5):
     score = cosine(known_embedding, candidate_embedding)
     if score <= thresh:
         print('>face is a Match (%.3f <= %.3f)' % (score, thresh))
+        a = decimal.Decimal((1 - (score / 3)) *100)
+        rou = round(a, 2)
+        print(rou, ' %')
+        return rou
     else:
         print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
+        a = decimal.Decimal((1 - (score / 2.5)) *100)
+        rou = round(a, 2)
+        print(rou, ' %')
+        return rou
 
-# filename = '..\\coderschool\\image\\4.jpg'
-def output_drawFace(filename):
-    pixels = pyplot.imread(filename)
-    detector = MTCNN()
-    faces = detector.detect_faces(pixels)
-    draw_image_with_boxes(filename, faces)
-
-
-# define filenames
-img1 = '..\\coderschool\\image\\3.jpg'
-img2 = '..\\coderschool\\image\\4.jpg'
 def Output(img1, img2):
     filenames = [img1,img2 ]
-    # get embeddings file filenames
     embeddings = get_embeddings(filenames)
-    # define sharon stone
-    # sharon_id = embeddings[0]
-    # verify known photos of sharon
-    is_match(embeddings[0], embeddings[1])
 
+    is_match(embeddings[0], embeddings[1])
+link_img1 = '../Read_IDCardVN/image/nhat1_cmnd.jpg'
+link_img2 = '../Read_IDCardVN/image/nhat1_selfie.jpg'
+
+img1 = cv2.imread(link_img1)
+img2 = cv2.imread(link_img2)
 Output(img1, img2)

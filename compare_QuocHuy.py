@@ -31,19 +31,19 @@ def OUTPUT_compare_vs_display(img_source, img_input_crop, source_gray, input_cro
         if(len(cnts)>= 5):
             print('SAME!!')
             cv2.rectangle(img_source,(0,0), (img_source.shape[1], img_source.shape[0]), (0, 255, 0), 2)
-            cv2.rectangle(img_input_crop,(int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10)), (int(img_input_crop.shape[1] / 4 + 5), int(img_input_crop.shape[0] / 3 + 20)), (0, 255, 0), 2)
-            cv2.putText(img_input_crop, 'TRUE', (int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+            cv2.rectangle(img_input_crop,(int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10)), (int(img_input_crop.shape[1] / 4 + 5), int(img_input_crop.shape[0] / 3 + 20)), (0,255, 0), 2)
+            cv2.putText(img_input_crop, 'MATCH', (int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
         else:
             for c in cnts:
                 (x, y, w, h) = cv2.boundingRect(c)
                 cv2.rectangle(img_source, (x, y),(x + w, y + h), (0, 0, 255), 1)
-                cv2.rectangle(img_input_crop,  (int(img_input_crop.shape[1] / 11) + x, int(img_input_crop.shape[0] / 10)+y), (int(img_input_crop.shape[1] / 11) + x + w, int(img_input_crop.shape[0] / 10)+y + h), (0, 0, 255), 1)
+                cv2.rectangle(img_input_crop,  (int(img_input_crop.shape[1] / 11) + x, int(img_input_crop.shape[0] / 10)+y), (int(img_input_crop.shape[1] / 11) + x + w, int(img_input_crop.shape[0] / 10)+y + h), (0, 0, 255), 2)
                 cv2.rectangle(img_input_crop,(int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10)), (int(img_input_crop.shape[1] / 4 + 5), int(img_input_crop.shape[0] / 3 + 20)), (0, 0, 255), 2)
-                cv2.putText(img_input_crop, 'NOT SAME', (int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+                cv2.putText(img_input_crop, 'NOT MATCH', (int(img_input_crop.shape[1] / 11),int(img_input_crop.shape[0] / 10) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
     return [img_source, img_input_crop]
 
-link_img_input = '../coderschool/image/cmnd1_fake2.jpg'
-link_img_source = '../coderschool/image/cmnd1_QuocHuy.jpg'
+link_img_input = '../Read_IDCardVN/image/cmnd1.jpg'
+link_img_source = '../Read_IDCardVN/image/cmnd1_QuocHuy.jpg'
 def OUTPUT(link_img_input, link_img_source ):
     img_source = read_img(link_img_source)
     img_input= read_img(link_img_input)
